@@ -1,5 +1,4 @@
-import json
-from flask import Flask, request
+from flask import Flask, render_template, request, jsonify
 import numpy as np
 import pandas as pd
 from sklearn.datasets import load_iris
@@ -35,60 +34,50 @@ def train_knn(k=5):
 # Train model and get accuracy
 knn_model, iris_target_names, knn_accuracy = train_knn(k=5)
 
-# Function to save predictions to a JSON file
-def save_to_json(data, filename="predictions.json"):
-    try:
-        with open(filename, "a") as f:  # Append mode to keep all predictions
-            json.dump(data, f)
-            f.write("\n")  # Newline for each prediction entry
-    except Exception as e:
-        print(f"Error saving to JSON: {e}")
+@app.route('/')
+def home():
+    """ Renders the prediction form page with model accuracy """
+    return render_template("predict.html", accuracy=knn_accuracy)
 
 @app.route('/handle_get', methods=['GET'])
 def handle_get():
-    """ Handles GET request for flower prediction and saves output to a JSON file """
+    """ Handles GET request for flower prediction (Returns JSON) """
     try:
         sepal_length = float(request.args.get('sepal_length'))
         sepal_width = float(request.args.get('sepal_width'))
         petal_length = float(request.args.get('petal_length'))
         petal_width = float(request.args.get('petal_width'))
 
+        # Predict the flower
         user_input = np.array([[sepal_length, sepal_width, petal_length, petal_width]])
         predicted_class = knn_model.predict(user_input)[0]
         predicted_species = iris_target_names[predicted_class]
 
-        response_data = {"response": f"Predicted Species: {predicted_species}"}
-        save_to_json(response_data)  # Save result to JSON
-
-        return f"<h1>Predicted Species: {predicted_species}</h1>"
+        # Return response as JSON
+        return jsonify({"response": predicted_species})
 
     except Exception:
-        error_data = {"response": "Error: Invalid input"}
-        save_to_json(error_data)  # Save error to JSON
-        return "<h1>Error: Invalid input</h1>", 400
+        return jsonify({"response": "Error: Invalid input"}), 400
 
 @app.route('/handle_post', methods=['POST'])
 def handle_post():
-    """ Handles POST request for flower prediction and saves output to a JSON file """
+    """ Handles POST request for flower prediction (Returns JSON) """
     try:
         sepal_length = float(request.form['sepal_length'])
         sepal_width = float(request.form['sepal_width'])
         petal_length = float(request.form['petal_length'])
         petal_width = float(request.form['petal_width'])
 
+        # Predict the flower
         user_input = np.array([[sepal_length, sepal_width, petal_length, petal_width]])
         predicted_class = knn_model.predict(user_input)[0]
         predicted_species = iris_target_names[predicted_class]
 
-        response_data = {"response": f"Predicted Species: {predicted_species}"}
-        save_to_json(response_data)  # Save result to JSON
-
-        return f"<h1>Predicted Species: {predicted_species}</h1>"
+        # Return response as JSON
+        return jsonify({"response": predicted_species})
 
     except Exception:
-        error_data = {"response": "Error: Invalid input"}
-        save_to_json(error_data)  # Save error to JSON
-        return "<h1>Error: Invalid input</h1>", 400
+        return jsonify({"response": "Error: Invalid input"}), 400
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000)
