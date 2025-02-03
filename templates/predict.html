@@ -1,0 +1,25 @@
+<html>
+<head>
+    <title>Iris Flower Prediction</title>
+    <style>
+        div {
+            width: 400px;
+            border: 1px solid green;
+            padding: 10px;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Predict Flower</h1>
+        <form method="POST" action="{{ url_for('handle_post') }}">
+            <input type="text" name="sepal_length" placeholder="Sepal Length (cm)" required>
+            <input type="text" name="sepal_width" placeholder="Sepal Width (cm)" required>
+            <input type="text" name="petal_length" placeholder="Petal Length (cm)" required>
+            <input type="text" name="petal_width" placeholder="Petal Width (cm)" required>
+            <button type="submit">Predict</button>
+        </form>
+    </div>
+</body>
+</html>
