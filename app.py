@@ -24,7 +24,7 @@ def train_knn(k=5):
 
     knn = KNeighborsClassifier(n_neighbors=k)
     knn.fit(X_train, y_train)
-
+    
     y_pred = knn.predict(X_test)
     accuracy = accuracy_score(y_test, y_pred)
     print(f"KNN Model Accuracy: {accuracy:.2f}")
@@ -39,7 +39,7 @@ def home():
     """ Renders the prediction form page with model accuracy """
     return render_template("predict.html", accuracy=knn_accuracy)
 
-@app.route('/handle_get', methods=['GET'])
+@app.route('/predict', methods=['GET'])
 def handle_get():
     """ Handles GET request for flower prediction (Returns JSON) """
     try:
@@ -59,7 +59,7 @@ def handle_get():
     except Exception:
         return jsonify({"response": "Error: Invalid input"}), 400
 
-@app.route('/handle_post', methods=['POST'])
+@app.route('/predict', methods=['POST'])
 def handle_post():
     """ Handles POST request for flower prediction (Returns JSON) """
     try:
