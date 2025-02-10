@@ -1,0 +1,15 @@
+{
+    "products": [
+      {
+        "id": 1,
+        "name": "Pen",
+        "description": "Blue ink pen",
+        "price": 2.5,
+        "category": "Stationery",
+        "inStock": true
+      }
+    ],
+    "orders": [],
+    "carts": {}
+  }
+  
