@@ -1,7 +1,7 @@
 // registry.js
 const express = require('express');
 const app = express();
-const PORT = 3001; // or any preferred port
+const PORT = 3001;
 
 app.get('/getServer', (req, res) => {
   res.json({

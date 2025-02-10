@@ -5,7 +5,7 @@ const path = require('path');
 const cors = require('cors');
 
 const app = express();
-const PORT = 3002; // Use a distinct port to avoid conflicts
+const PORT = 3002; 
 
 // Paths to our JSON files
 const PRIMARY_FILE = path.join(__dirname, 'primary_db.json');
@@ -25,9 +25,7 @@ function loadDB(filePath) {
 let primaryDB = loadDB(PRIMARY_FILE);
 let secondaryDB = loadDB(SECONDARY_FILE);
 
-// We'll maintain a queue of replication tasks, so the user gets an
-// immediate response after writing to the primary, and we replicate
-// to the secondary "later."
+
 let replicationQueue = [];
 
 // Function to write changes to primary DB on disk
@@ -40,7 +38,7 @@ function saveSecondaryDB() {
   fs.writeFileSync(SECONDARY_FILE, JSON.stringify(secondaryDB, null, 2), 'utf-8');
 }
 
-// Periodically process the replication queue (e.g., every 5 seconds)
+
 setInterval(() => {
   if (replicationQueue.length > 0) {
     console.log('Processing replication tasks...');
@@ -49,7 +47,7 @@ setInterval(() => {
   while (replicationQueue.length > 0) {
     const task = replicationQueue.shift();
 
-    // Example: "ADD_PRODUCT" or "UPDATE_PRODUCT", etc.
+    
     if (task.type === 'ADD_PRODUCT') {
       secondaryDB.products.push(task.payload);
     }
@@ -65,8 +63,7 @@ setInterval(() => {
         secondaryDB.products.splice(index, 1);
       }
     }
-    // Similarly handle "ADD_ORDER", "ADD_TO_CART", etc.
-
+    
     // After updating the in-memory secondaryDB, write to disk
     saveSecondaryDB();
   }
@@ -75,9 +72,6 @@ setInterval(() => {
 app.use(cors());
 app.use(express.json());
 
-// -----------------------------------------------------
-// PRODUCTS - For demonstration, only implementing a few endpoints
-// -----------------------------------------------------
 
 // GET /products - read directly from the primary DB
 app.get('/products', (req, res) => {
@@ -146,9 +140,9 @@ app.delete('/products/:id', (req, res) => {
   res.json({ message: 'Product removed from primary. Will replicate asynchronously.' });
 });
 
-// (You would similarly adapt Orders and Cart with tasks: "ADD_ORDER", "ADD_TO_CART", etc.)
+// (similarly adapt Orders and Cart with tasks: "ADD_ORDER", "ADD_TO_CART", etc.)
 
-// -----------------------------------------------------
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Asynchronous Replication server running on http://localhost:${PORT}`);
